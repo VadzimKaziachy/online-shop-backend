@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+tornado = "==6.0.4"
+peewee-async = "==0.7.0"
+peewee-migrations = "==0.3.19"
+aiopg = "==1.0.0"
+psycopg2 = "==2.8.6"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
