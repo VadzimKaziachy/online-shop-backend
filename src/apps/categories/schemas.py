@@ -14,13 +14,13 @@ class CategorySchema(BaseSchema):
     id = fields.Int(
         required=True,
     )
-    name = fields.Str(
-        required=True,
-        description='Name of the category',
-    )
     created = fields.DateTime(
         required=False,
         description='The time at which the category was created in the database',
+    )
+    name = fields.Str(
+        required=True,
+        description='Name of the category',
     )
 
 
@@ -30,5 +30,5 @@ class CategoryCreateSchema(CategorySchema):
         exclude = ('created', 'id')
 
 
-class GistParameter(Schema):
+class IdParameter(Schema):
     id = fields.Int()

@@ -1,6 +1,7 @@
 import json
 
 from peewee import DoesNotExist
+from playhouse.shortcuts import model_to_dict
 
 from . import schemas
 from .models import (
@@ -18,12 +19,11 @@ from settings.status import (
 
 
 class CategoriesHandler(BaseHandler):
-    SUPPORTED_METHODS = ("GET", "HEAD", "POST")
 
     async def get(self):
         """
         ---
-        tags: [Categories]
+        tags: [categories]
         summary: Call for read list categories
         description: Request for return a list CategoryModel.
 
@@ -41,12 +41,15 @@ class CategoriesHandler(BaseHandler):
         """
         categories = await self.application.objects.execute(CategoryModel.select())
 
-        self.json_response(HTTP_200_OK, [{'id': obj.id, 'name': obj.name} for obj in categories])
+        self.json_response(
+            status=HTTP_200_OK,
+            data=[model_to_dict(obj, only=(CategoryModel.id, CategoryModel.name)) for obj in categories]
+        )
 
     async def post(self):
         """
         ---
-        tags: [Categories]
+        tags: [categories]
         summary: Call for create category
         description: Request for created new category.
 
@@ -71,22 +74,21 @@ class CategoriesHandler(BaseHandler):
 
         category = await self.application.objects.create(CategoryModel, name=body.get('name'))
 
-        self.json_response(HTTP_201_CREATED, {'id': category.id, 'name': category.name, 'created': category.created})
+        self.json_response(status=HTTP_201_CREATED, data=model_to_dict(category))
 
 
 class CategoryHandler(BaseHandler):
-    SUPPORTED_METHODS = ("DELETE", "PATCH")
 
     async def delete(self, id):
         """
         ---
-        tags: [Categories]
+        tags: [categories]
         summary: Call for delete category
-        description: Request for created new category.
+        description: Request for delete category.
 
         parameters:
         - in: path
-          schema: GistParameter
+          schema: IdParameter
 
         responses:
             204:
@@ -106,7 +108,47 @@ class CategoryHandler(BaseHandler):
         try:
             await self.application.objects.delete(CategoryModel.get(id=id))
 
-            self.json_response(HTTP_204_NO_CONTENT, {})
+            self.json_response(status=HTTP_204_NO_CONTENT, data={})
         except DoesNotExist:
 
-            self.json_response(HTTP_404_NOT_FOUND, {'detail': 'Not found.'})
+            self.json_response(status=HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
+
+    async def patch(self, id):
+        """
+        ---
+        tags: [categories]
+        summary: Call for change category
+        description: Request for change category
+
+        parameters:
+            - in: path
+              schema: IdParameter
+
+        requestBody:
+            description: category
+            required: True
+            content:
+                application/json:
+                    schema:
+                        CategoryCreateSchema
+
+        responses:
+            200:
+                description: return change object category
+                content:
+                    application/json:
+                        schema:
+                            CategorySchema
+        """
+        try:
+            body = json.loads(self.request.body)
+
+            category = await self.application.objects.get(CategoryModel, id=id)
+            category.name = body.get('name')
+
+            await self.application.objects.update(category)
+
+            self.json_response(status=HTTP_200_OK, data=model_to_dict(category))
+        except DoesNotExist:
+
+            self.json_response(status=HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
