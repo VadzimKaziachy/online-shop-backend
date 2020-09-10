@@ -7,6 +7,13 @@ from base.model import (
 
 
 class CategoryModel(BaseModel):
+    """
+    Category model.
+
+    Fields:
+        1) name - field for saving shop category;
+    """
+
     name = CharField()
 
     def __str__(self):
