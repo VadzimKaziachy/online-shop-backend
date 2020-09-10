@@ -7,11 +7,12 @@ class BaseHandler(RequestHandler):
     Application base handler
     """
 
-    def json_response(self, status, data):
+    def json_response(self, status: int, body: dict or list):
         """
         Helper method for sending response containing json data
         """
         self.set_header("Content-Type", "application/json")
         self.set_status(status)
-        self.write(json.dumps(data, default=str))
+        if body:
+            self.write(json.dumps(body, default=str))
         self.finish()

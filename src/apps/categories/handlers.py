@@ -10,11 +10,12 @@ from .models import (
 from base.handler import (
     BaseHandler,
 )
-from settings.status import (
+from settings.constants import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
     HTTP_404_NOT_FOUND,
+    HTTP_404_NOt_FOUND_BODY,
 )
 
 
@@ -43,7 +44,7 @@ class CategoriesHandler(BaseHandler):
 
         self.json_response(
             status=HTTP_200_OK,
-            data=[model_to_dict(obj, only=(CategoryModel.id, CategoryModel.name)) for obj in categories]
+            body=[model_to_dict(obj, only=(CategoryModel.id, CategoryModel.name)) for obj in categories]
         )
 
     async def post(self):
@@ -74,7 +75,7 @@ class CategoriesHandler(BaseHandler):
 
         category = await self.application.objects.create(CategoryModel, name=body.get('name'))
 
-        self.json_response(status=HTTP_201_CREATED, data=model_to_dict(category))
+        self.json_response(status=HTTP_201_CREATED, body=model_to_dict(category))
 
 
 class CategoryHandler(BaseHandler):
@@ -93,10 +94,7 @@ class CategoryHandler(BaseHandler):
         responses:
             204:
               description: return object CategoryModel
-              content:
-                application/json:
-                    schema:
-                        CategorySchema
+
             404:
               description: object not found
               content:
@@ -108,10 +106,10 @@ class CategoryHandler(BaseHandler):
         try:
             await self.application.objects.delete(CategoryModel.get(id=id))
 
-            self.json_response(status=HTTP_204_NO_CONTENT, data={})
+            self.json_response(status=HTTP_204_NO_CONTENT, body={})
         except DoesNotExist:
 
-            self.json_response(status=HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
+            self.json_response(status=HTTP_404_NOT_FOUND, body=HTTP_404_NOt_FOUND_BODY)
 
     async def patch(self, id):
         """
@@ -148,7 +146,7 @@ class CategoryHandler(BaseHandler):
 
             await self.application.objects.update(category)
 
-            self.json_response(status=HTTP_200_OK, data=model_to_dict(category))
+            self.json_response(status=HTTP_200_OK, body=model_to_dict(category))
         except DoesNotExist:
 
-            self.json_response(status=HTTP_404_NOT_FOUND, data={'detail': 'Not found.'})
+            self.json_response(status=HTTP_404_NOT_FOUND, body=HTTP_404_NOt_FOUND_BODY)
