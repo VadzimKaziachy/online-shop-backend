@@ -1,5 +1,7 @@
 import json
 
+from peewee import DoesNotExist
+
 from . import schemas
 from .models import (
     CategoryModel,
@@ -9,7 +11,9 @@ from base.handler import (
 )
 from settings.status import (
     HTTP_200_OK,
-    HTTP_201_CREATED
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
+    HTTP_404_NOT_FOUND,
 )
 
 
@@ -73,20 +77,36 @@ class CategoriesHandler(BaseHandler):
 class CategoryHandler(BaseHandler):
     SUPPORTED_METHODS = ("DELETE", "PATCH")
 
-    def delete(self):
+    async def delete(self, id):
         """
         ---
         tags: [Categories]
         summary: Call for delete category
         description: Request for created new category.
 
+        parameters:
+        - in: path
+          schema: GistParameter
+
         responses:
-            200:
+            204:
               description: return object CategoryModel
               content:
                 application/json:
                     schema:
                         CategorySchema
+            404:
+              description: object not found
+              content:
+                application/json:
+                    schema:
+                        NotFoundSchema
 
         """
-        self.json_response(HTTP_200_OK, {})
+        try:
+            await self.application.objects.delete(CategoryModel.get(id=id))
+
+            self.json_response(HTTP_204_NO_CONTENT, {})
+        except DoesNotExist:
+
+            self.json_response(HTTP_404_NOT_FOUND, {'detail': 'Not found.'})

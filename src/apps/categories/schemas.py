@@ -1,6 +1,10 @@
-from base.schema import BaseSchema
+from base.schema import (
+    BaseSchema,
+    NotFoundSchema,
+)
 from marshmallow import (
     fields,
+    Schema,
 )
 
 
@@ -25,3 +29,6 @@ class CategoryCreateSchema(CategorySchema):
         ordered = True
         exclude = ('created', 'id')
 
+
+class GistParameter(Schema):
+    id = fields.Int()

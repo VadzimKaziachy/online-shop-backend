@@ -7,5 +7,5 @@ from .handlers import (
 
 routes = [
     url(r'/categories', CategoriesHandler),
-    # url(r'/categories/(.*)', CategoryHandler)
+    url(r'/categories/(?P<id>[0-9]+)$', CategoryHandler)
 ]
