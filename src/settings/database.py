@@ -1,5 +1,5 @@
 import peewee_async
-from settings.settings import (
+from settings.base import (
     POSTGRES_DB,
     POSTGRES_USER,
     POSTGRES_HOST,

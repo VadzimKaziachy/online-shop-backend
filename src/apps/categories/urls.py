@@ -1,8 +1,10 @@
+from tornado.web import url
+
 from .handlers import (
-    CategoryHandler,
+    CategoriesHandler,
 )
 
 
 routes = [
-    (r'/', CategoryHandler),
+    url(r'/categories', CategoriesHandler),
 ]

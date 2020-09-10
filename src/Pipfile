@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 tornado = "==6.0.4"
+tornado-swagger = "==1.2.6"
 peewee-async = "==0.7.0"
 peewee-migrations = "==0.3.19"
 aiopg = "==1.0.0"
