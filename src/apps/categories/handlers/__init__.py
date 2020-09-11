@@ -1,2 +1,3 @@
 from .category_handler import CategoryHandler
+from .products_handler import ProductsHandler
 from .categories_handler import CategoriesHandler
