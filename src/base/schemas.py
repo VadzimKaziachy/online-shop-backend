@@ -16,3 +16,11 @@ class NotFoundSchema(BaseSchema):
         example='Not found.'
 
     )
+
+
+class BadRequestSchema(BaseSchema):
+    errors = fields.Dict(
+        required=False,
+        description="Attached request body validation errors",
+        example={"name": ["Missing data for required field."]},
+    )
