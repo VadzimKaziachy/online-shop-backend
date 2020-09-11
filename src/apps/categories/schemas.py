@@ -1,6 +1,7 @@
-from base.schema import (
+from base.schemas import (
     BaseSchema,
     NotFoundSchema,
+    BadRequestSchema,
 )
 from marshmallow import (
     fields,
